@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Scanner Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <h1>🖥️ Network Scanner Tool</h1>
+            <p>🌐 Real-Time Port Scan Analyzer with ML Analysis</p>
+            <div class="auth-section">
+                <span>👤 Welcome, {{ session.get('username', 'Guest') }}!</span>
+                <a href="/logout" class="logout-btn">🚪 Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="scan-controls">
+            <h2>🔧 Start a Scan</h2>
+            <input id="target" type="text" placeholder="Target IP or Hostname (e.g., 192.168.1.1)">
+            <select id="scanType">
+                <option value="stealth">🕵️ Stealth Scan</option>
+                <option value="tcp">🌐 TCP Connect</option>
+                <option value="udp">💻 UDP Scan</option>
+            </select>
+            <label><input type="checkbox" id="fullScan"> Full Scan (1-65535) 🔍</label>
+            <button onclick="startScan()">🚀 Start Scan</button>
+        </div>
+
+        <div class="scan-results">
+            <div class="card">
+                <h2>📋 Scan Results</h2>
+                <div class="scrollable-results">
+                    <table id="resultsTable">
+                        <thead>
+                            <tr>
+                                <th>Port</th>
+                                <th>Status</th>
+                                <th>Banner</th>
+                                <th>Risk</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card">
+                <h2>📊 Port Status</h2>
+                <div id="portChart"></div>
+            </div>
+            <div class="card">
+                <h2>⚠️ Risk Analysis</h2>
+                <div id="riskChart"></div>
+            </div>
+        </div>
+
+        <div class="history-section">
+            <h2>📅 Scan History</h2>
+            <a href="{{ url_for('history') }}" class="history-btn">🔍 View Scan History</a>
+        </div>
+    </main>
+
+    <script>
+        function startScan() {
+            const target = document.getElementById('target').value;
+            const scanType = document.getElementById('scanType').value;
+            const fullScan = document.getElementById('fullScan').checked;
+
+            fetch('/scan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ target, type: scanType, full_scan: fullScan })
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateCharts(data);
+                updateResultsTable(data.results, data.anomalies);
+                saveScanHistory(data);
+            });
+        }
+
+        function updateCharts(data) {
+            const statusCounts = { open: 0, closed: 0, filtered: 0 };
+            data.results.forEach(r => statusCounts[r.status] = (statusCounts[r.status] || 0) + 1);
+
+            Plotly.newPlot('portChart', [{
+                values: Object.values(statusCounts),
+                labels: Object.keys(statusCounts),
+                type: 'pie'
+            }], { title: '🛠️ Port Status Distribution' });
+
+            const ctx = document.createElement('canvas');
+            ctx.id = 'riskChartCanvas';
+            document.getElementById('riskChart').innerHTML = '';
+            document.getElementById('riskChart').appendChild(ctx);
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.results.filter(r => r.status === 'open').map(r => r.port),
+                    datasets: [{
+                        label: '⚠️ Risk Score',
+                        data: data.anomalies.map(a => a.risk_score),
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                    }]
+                },
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
+            });
+        }
+
+        function updateResultsTable(results, anomalies) {
+            const tbody = document.querySelector('#resultsTable tbody');
+            tbody.innerHTML = '';
+            results.forEach(r => {
+                const row = document.createElement('tr');
+                const anomaly = anomalies.find(a => a.port === r.port);
+                row.innerHTML = `
+                    <td>${r.port}</td>
+                    <td>${r.status}</td>
+                    <td>${r.banner || 'N/A'}</td>
+                    <td style="color: ${anomaly ? 'red' : 'green'}">
+                        ${anomaly ? '⚠️ Anomaly' : '✅ Normal'}
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function saveScanHistory(data) {
+            const historyDiv = document.getElementById('history');
+            const historyEntry = document.createElement('div');
+            historyEntry.className = 'history-entry';
+            historyEntry.innerHTML = `
+                <p><strong>🕓 Scan on ${new Date().toLocaleString()}</strong></p>
+                <button onclick="downloadScan(${JSON.stringify(data.results)})">💾 Download Results</button>
+                <button onclick="viewFullScan(${JSON.stringify(data.results)})">🔎 View Full Scan</button>
+            `;
+            historyDiv.appendChild(historyEntry);
+        }
+
+        function downloadScan(results) {
+            const blob = new Blob([JSON.stringify(results, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'scan_results.json';
+            link.click();
+        }
+
+        function viewFullScan(results) {
+            const fullScanWindow = window.open('', '_blank', 'width=800,height=600');
+            fullScanWindow.document.write('<pre>' + JSON.stringify(results, null, 2) + '</pre>');
+        }
+    </script>
+</body>
+</html>

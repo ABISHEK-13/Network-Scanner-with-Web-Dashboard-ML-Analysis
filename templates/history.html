@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scan History</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #1c1c2e;
+            color: #ffffff;
+            padding: 30px;
+        }
+        h1 {
+            color: #00ffff;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            background-color: #2a2a40;
+        }
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #444;
+        }
+        th {
+            background-color: #00ffff;
+            color: #0f2027;
+        }
+        tr:hover {
+            background-color: #333;
+        }
+        .actions a {
+            margin: 0 5px;
+            text-decoration: none;
+            color: #00ffff;
+        }
+        .actions a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Scan History</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Target</th>
+                <th>Scan Type</th>
+                <th>Timestamp</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for scan in scans %}
+            <tr>
+                <td>{{ scan.id }}</td>
+                <td>{{ scan.target }}</td>
+                <td>{{ scan.scan_type }}</td>
+                <td>{{ scan.timestamp }}</td>
+                <td class="actions">
+                    <a href="/scan/{{ scan.id }}">View</a>
+                    <a href="/export/pdf/{{ scan.id }}">PDF</a>
+                    <a href="/export/csv/{{ scan.id }}">CSV</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
