@@ -1,128 +1,168 @@
-🛡️ Network-Scanner-with-Web-Dashboard-ML-Analysis
-📌 Project Overview
+# 🛡️ Smart Network Scanner with ML-Based Anomaly Detection
 
-Modern networks face increasing threats from malware, Remote Access Trojans (RATs), and backdoors — demanding smarter, customizable scanning solutions.
-Traditional tools like Nmap are powerful but often require heavy scripting or external tools for automation, anomaly detection, and integration.
-This project introduces a custom Python-based network scanner enhanced with machine learning-powered anomaly detection and an intuitive web dashboard for real-time monitoring, historical tracking, and reporting.
+## 📌 Project Overview
 
-❗ Problem Statement
-There is a lack of flexible, real-time network scanning tools that offer:
-Integrated anomaly detection
-Easy historical tracking
-User-friendly dashboards
-Educational and research-focused customization
+Modern networks face increasing threats from malware, RATs, and backdoors — demanding smarter, customizable scanning solutions.
 
-🎯 Project Objective
-To develop a custom Python-based network scanner equipped with:
-A web dashboard
-Machine learning-powered anomaly detection
-Real-time scan analysis
-Historical tracking and reporting
+Traditional tools like Nmap often require heavy scripting or external integrations for automation and anomaly detection.
 
-📂 Scope of the Project
-Focused on internal network scanning (not internet-wide reconnaissance)
-Implements core scanning techniques:
-TCP Connect Scan
-SYN Scan
-UDP Scan
-Integrates Isolation Forest machine learning model for anomaly detection
+This project introduces a custom Python-based network scanner enhanced with machine learning-powered anomaly detection and a real-time web dashboard.
 
-Includes:
-User authentication
-Scan history tracking
-PDF and CSV report export
+---
 
-🛠️ System Architecture
-1️⃣ Scanning Engine
-Built from scratch using raw sockets
-Supports TCP and UDP packet crafting
-Performs port scanning and service detection
+## ❗ Problem Statement
 
-2️⃣ Machine Learning Module
-Uses Isolation Forest from scikit-learn
-Trained on baseline scan data
-Detects suspicious port/service behavior patterns
+There is a lack of flexible, real-time network scanning tools that provide:
 
-3️⃣ Web Dashboard
-Developed using:
-Flask
-HTML / CSS / JavaScript
-Chart.js
-Provides:
-Real-time scan visualization
-Port distribution charts
-Anomaly status indicators
+- Built-in anomaly detection
+- Historical tracking
+- User-friendly dashboards
+- Easy integration for educational and research use
 
-Historical data tracking
+---
 
-4️⃣ Database
+## 🎯 Project Objective
 
-Uses SQLite
+To develop a Python-based network scanner with:
 
-Stores:
+- Web dashboard
+- Machine learning anomaly detection (Isolation Forest)
+- Real-time scan analysis
+- Historical scan tracking
+- Report export (PDF & CSV)
 
-User accounts
+---
 
-Scan logs
+## 📂 Scope
 
-Classification results
+- Internal network scanning only
+- TCP Connect Scan
+- SYN Scan
+- UDP Scan
+- Isolation Forest ML-based anomaly detection
+- User authentication system
+- Scan history storage
+- Report export functionality
 
-Timestamps
+---
 
-5️⃣ Security
+## 🛠️ Technologies Used
 
-Password hashing via Werkzeug
+- Python 3.x
+- Flask
+- SQLite
+- scikit-learn
+- NumPy
+- Werkzeug
+- FPDF
+- HTML / CSS / JavaScript
 
-Session management for authenticated access
+---
 
-Protected routes for dashboard and reports
+## ⚙️ Installation Guide
 
-6️⃣ Report Generation
+### 1️⃣ Clone the Repository
 
-PDF export using ReportLab
-
-CSV export using Python's built-in CSV module
-
-⚙️ Installation Guide
-🔹 1. Clone the Repository
+```bash
 git clone https://github.com/yourusername/smart-network-scanner.git
 cd smart-network-scanner
+```
 
-🔹 2. Create Virtual Environment (Recommended)
+### 2️⃣ Create Virtual Environment (Recommended)
+
+```bash
 python -m venv venv
-
+```
 
 Activate it:
 
-Windows
-
+**Windows**
+```bash
 venv\Scripts\activate
+```
 
-
-Linux/Mac
-
+**Linux / Mac**
+```bash
 source venv/bin/activate
+```
 
-🔹 3. Install Dependencies
+---
+
+### 3️⃣ Install Requirements
+
+Create a file named `requirements.txt` and paste:
+
+```
+Flask==3.0.0
+Werkzeug==3.0.1
+scikit-learn==1.4.0
+numpy==1.26.4
+fpdf==1.7.2
+```
+
+Then install:
+
+```bash
 pip install -r requirements.txt
+```
 
-▶️ Running the Application
+---
 
-Start the Flask server:
+## ▶️ Running the Application
 
+```bash
 python app.py
+```
 
+Open browser:
 
-Then open your browser and visit:
-
+```
 http://127.0.0.1:5000
+```
 
-📊 Features
+---
 
-✅ Real-time internal network scanning
-✅ TCP, SYN, and UDP scanning techniques
-✅ Machine learning-based anomaly detection
-✅ Interactive web dashboard
-✅ Historical scan tracking
-✅ User authentication system
-✅ PDF and CSV export functionality
+## 📊 Features
+
+- Real-time network scanning
+- TCP, SYN, UDP scanning
+- Machine Learning anomaly detection
+- Interactive dashboard
+- Scan history tracking
+- Secure login system
+- PDF & CSV export
+
+---
+
+## 🧠 Machine Learning Workflow
+
+1. Perform baseline scan
+2. Train Isolation Forest model
+3. Store scan results in SQLite
+4. Detect anomalies in future scans
+5. Display flagged ports/services on dashboard
+
+---
+
+## 🔒 Security Notice
+
+This tool is for:
+
+- Educational purposes
+- Internal network testing
+- Research environments
+
+⚠️ Only scan networks you own or have permission to test.
+
+Unauthorized scanning may violate laws.
+
+---
+
+## 🚀 Future Improvements
+
+- Role-based access control
+- Scheduled scans
+- Email alerts for anomalies
+- Docker deployment
+- Advanced ML models
+
